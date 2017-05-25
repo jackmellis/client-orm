@@ -1,0 +1,45 @@
+{
+  "name": "client-orm",
+  "version": "0.1.0",
+  "description": "Manage client-server record synchronisation",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "ava",
+    "watch" : "npm test -- --watch",
+    "debug" : "inspect node_modules/ava/profile"
+  },
+  "ava": {
+    "files": [
+      "spec/**/*.spec.js"
+    ],
+    "source": [
+      "src/**/*.{js}"
+    ],
+    "require": [
+      "./spec/helpers/setup"
+    ],
+    "verbose": false,
+    "concurrency": 8,
+    "timeout": "240s"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jackmellis/client-orm.git"
+  },
+  "author": "Jack Ellis",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/jackmellis/client-orm/issues"
+  },
+  "homepage": "https://github.com/jackmellis/client-orm#readme",
+  "dependencies": {
+    "jpex": "^2.0.0",
+    "jpex-defaults": "^2.0.0"
+  },
+  "devDependencies": {
+    "ava": "^0.19.1",
+    "ava-spec": "^1.1.0",
+    "mock-http-client": "^0.1.0",
+    "sinon": "^2.3.1"
+  }
+}
