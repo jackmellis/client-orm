@@ -20,7 +20,7 @@ exports.add = function (record) {
     if (record.$set){
       record.$set(result);
     }else{
-      record = new this.Record(Object.assign({}, record, result));
+      record = new this.Record(result);
     }
   }
   return record;
@@ -52,12 +52,14 @@ exports.create = function (record) {
           method : this.api.create.method,
           data : obj
         }).then(response => {
-          record.$set(response.data);
+          this.add(response.data);
         });
       }
     })
     .then(() => {
-      return this.add(record);
+      var result = this.add(record);
+      record.$changes = {};
+      return result;
     });
 };
 

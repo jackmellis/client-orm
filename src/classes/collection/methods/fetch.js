@@ -5,6 +5,8 @@ function doFetch(url) {
       return this.$promise((resolve, reject) => {
         cached.promises.push({resolve, reject});
       });
+    }else if (cached.result){
+      return this.$promise.resolve(cached.result);
     }
   }
   if (url && this.http){

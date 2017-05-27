@@ -14,11 +14,13 @@ Base.register.service('$urlBuilder', [], function () {
     if (!params || url.indexOf('{') < 0){
       return url;
     }
-    Object.keys(params).forEach(key => {
-      const value = params[key];
-      const needle = '{' + key + '}';
+    const keys = Object.keys(params);
+    for (let x = 0, l = keys.length; x < l && url.indexOf('{') >= 0; x++){
+      let key = keys[x];
+      let value = params[key];
+      let needle = '{' + key + '}';
       url = url.replace(needle, () => value);
-    });
+    }
     return url;
   };
   this.buildQuery = function (url, query) {

@@ -10,21 +10,27 @@ exports.filterResults = function (results, query) {
     });
   }
 
-  return results.map(row => new Record(row));
+  return results.map(row => new Record().$set(row));
 };
 
 exports.getCache = function (query) {
-  var key = query || this.api.get;
+  var key = query || (this.api.get && this.api.get.url);
   var result = this.cache[key];
+
   if (!result && query){
-    return this.getCache();
+    key = this.api.get.url + query.substr(query.indexOf('?'));
+    if (key === query){
+      return this.getCache();
+    }else{
+      return this.getCache(key);
+    }
   }
   return result;
 };
 
 // create a new cache entry
 exports.addToCache = function (query) {
-  var key = query || this.api.get;
+  var key = query || (this.api.get && this.api.get.url);
   var result = {
     timestamp : null,
     promises : [],
@@ -36,7 +42,7 @@ exports.addToCache = function (query) {
 
 // remove an entry from the cache
 exports.removeFromCache = function (query) {
-  var key = query || this.api.get;
+  var key = query || (this.api.get && this.api.get.url);
   delete this.cache[key];
 };
 
