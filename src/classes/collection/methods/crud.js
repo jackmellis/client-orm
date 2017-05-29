@@ -20,7 +20,7 @@ exports.add = function (record) {
     if (record.$set){
       record.$set(result);
     }else{
-      record = new this.Record(result);
+      record = new this.Record().$set(result);
     }
   }
   return record;
@@ -43,6 +43,8 @@ exports.remove = function (record) {
 };
 
 exports.create = function (record) {
+  const idField = this.primaryKey;
+
   return this.$promise.resolve()
     .then(() => {
       if (this.api.create && this.http){
@@ -52,14 +54,23 @@ exports.create = function (record) {
           method : this.api.create.method,
           data : obj
         }).then(response => {
-          this.add(response.data);
+          if (response.data){
+            return response.data;
+          }else{
+            return record.toObject();
+          }
         });
+      }else{
+        return record.toObject();
       }
     })
-    .then(() => {
-      var result = this.add(record);
+    .then(response => {
+      return this.add(response);
+    })
+    .then(response => {
       record.$changes = {};
-      return result;
+      record.$set(response.$proxy);
+      return record;
     });
 };
 
@@ -78,7 +89,7 @@ exports.update = function (record) {
 
   // update the local store first
   let returnable = this.add(obj);
-  if (!returnable.then || !returnable.catch){
+  if (!returnable || !returnable.then || !returnable.catch){
     returnable = this.$promise.resolve();
   }
 
@@ -89,7 +100,7 @@ exports.update = function (record) {
         let url = this.$urlBuilder.buildUrl(this.api.update.url, params);
 
         return this.http({
-          url : this.api.update.url,
+          url : url,
           method : this.api.update.method,
           data : obj
         })
@@ -121,7 +132,7 @@ exports.delete = function (record) {
   params[idField] = id;
 
   let returnable = this.remove(record);
-  if (!returnable.then || !returnable.catch){
+  if (!returnable || !returnable.then || !returnable.catch){
     returnable = this.$promise.resolve();
   }
 
@@ -131,7 +142,7 @@ exports.delete = function (record) {
         let url = this.$urlBuilder.buildUrl(this.api.delete.url, params);
 
         return this.http({
-          url : this.api.delete.url,
+          url,
           method : this.api.delete.method
         });
       }

@@ -79,7 +79,6 @@ test('saving should merge the two objects', async t => {
 
 test('saving with a different id should create a new record', async t => {
   let {user, users} = t.context;
-
   let copy = user.clone();
   copy.id = 'copy-id';
   copy.name = 'bob';

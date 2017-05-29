@@ -34,8 +34,6 @@ var Base = require('../base');
 var Record = Base.extend({
   dependencies : ['$namedParameters'],
   constructor(fieldValues){
-    this.$proxy = {};
-
     // create a getter and setter for each field
     const properties = {};
     Object.keys(this.$collection.fields).forEach(key => {
@@ -103,13 +101,23 @@ var Record = Base.extend({
     add(){
       return this.$collection.add(this);
     },
+    // remove a record from the store, but not the api
+    remove(){
+      return this.$collection.remove(this);
+    },
     // create or update the record depending on whether an id exists
     save(){
       if (!this.$proxy[this.$collection.primaryKey]){
-        return this.$collection.create(this);
+        return this.create();
       }else{
-        return this.$collection.update(this);
+        return this.update();
       }
+    },
+    create(){
+      return this.$collection.create(this);
+    },
+    update(){
+      return this.$collection.update(this);
     },
     // delete a record
     delete(){
@@ -133,6 +141,10 @@ var Record = Base.extend({
       delete this.$changes[this.$collection.primaryKey];
       return this;
     },
+    // clears any committed changes
+    restore(){
+      this.$changes = {};
+    },
     toString(){
       return JSON.stringify(this);
     },
@@ -145,13 +157,13 @@ var Record = Base.extend({
     }
   },
   properties : {
-    $changes : {
+    $proxy : {
       enumerable : false,
       default : () => ({})
     },
-    $proxy : {
+    $changes : {
       enumerable : false,
-      value : null
+      default : () => ({})
     }
   }
 });

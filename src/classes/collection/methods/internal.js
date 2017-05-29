@@ -67,7 +67,9 @@ exports.needsFetching = function (query) {
 exports.getPlainObject = function (record) {
   var obj = {};
   Object.keys(this.fields).forEach(function (key) {
-    obj[key] = record[key];
+    if (Object.hasOwnProperty.call(record, key)){
+      obj[key] = record[key];
+    }
   });
   return obj;
 };
