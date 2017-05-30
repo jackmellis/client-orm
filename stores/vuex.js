@@ -30,7 +30,7 @@ module.exports = function (store) {
   };
   storage.create = function (store, name, payload) {
     store.commit(name + '/CREATE', {data : payload});
-    return store.state[name].data[store.state.data.length-1];
+    return store.state[name].data[store.state[name].data.length-1];
   };
   storage.update = function (store, name, payload, idField) {
     var index = store.state[name].data.map(row => row[idField]).indexOf(payload[idField]);
