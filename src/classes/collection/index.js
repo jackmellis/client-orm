@@ -22,6 +22,7 @@ var Collection = Base.extend({
     this.http = http;
     this.timeToLive = timeToLive;
     this.$urlBuilder = $urlBuilder;
+    this.$queue = [];
 
     this.name = collectionSetup.setName(name);
     this.api = collectionSetup.setApi(api);

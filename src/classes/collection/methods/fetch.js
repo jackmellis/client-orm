@@ -66,25 +66,28 @@ exports.getByIdUrl = function (id) {
 
 exports.fetch = function (query) {
   const url = this.getUrl(query);
-  return (function(){
-    if (!url){
-      return this.$promise.resolve(this.records);
-    }else{
-      return doFetch.call(this, url);
-    }
-  }.call(this))
-    .then(results => this.filterResults(results, query));
+  return this.queue(() => {
+    return (function(){
+      if (!url){
+        return this.$promise.resolve(this.records);
+      }else{
+        return doFetch.call(this, url);
+      }
+    }.call(this))
+      .then(results => this.filterResults(results, query));
+  });
 };
 
 exports.fetchOne = function (query) {
   const url = this.getOneUrl(query);
-
   return (function(){
     if (!url){
       return this.fetch(query);
     }else{
-      return doFetch.call(this, url)
-        .then(results => this.filterResults(results, query));
+      return this.queue(() => {
+        return doFetch.call(this, url)
+          .then(results => this.filterResults(results, query));
+      });
     }
   }.call(this))
     .then(results => results.find(() => true));
@@ -99,8 +102,10 @@ exports.fetchById = function (id) {
   if (!url){
     return this.fetchOne(query);
   }else{
-    return doFetch.call(this, url)
-      .then(results => this.filterResults(results, query))
-      .then(results => results.find(() => true));
+    return this.queue(() => {
+      return doFetch.call(this, url)
+        .then(results => this.filterResults(results, query))
+        .then(results => results.find(() => true));
+    });
   }
 };

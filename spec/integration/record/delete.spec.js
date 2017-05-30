@@ -102,4 +102,33 @@ test('if it fails, the record is added back into the store', async t => {
     t.is(users.get().length, 3);
   }
 });
-test.todo('it waits for any other queued methods to complete');
+test('it waits for any other queued methods to complete', async t => {
+  let {users, http} = t.context;
+  let resolve;
+  http.when('/api/getbyid').call(() => {
+    return new Promise(r => {
+      resolve = r;
+    });
+  });
+  users.$collection.api.getById = {method : 'get', url : '/api/getbyid'};
+
+  http.expect('delete', /.*/, 0);
+
+  let user = users.getById('2');
+
+  user.delete();
+
+  await new Promise(r => setTimeout(r, 500));
+
+  http.assert();
+
+  http.expect('delete', /.*/, 1);
+
+  resolve({data:{}});
+
+  await users.wait();
+
+  http.assert();
+
+  t.pass();
+});

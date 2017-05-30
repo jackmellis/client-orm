@@ -109,9 +109,11 @@ test.group('fetchById', test => {
 
     http.expect('get', /\/api\/get.*/, 0).stop();
     http.expect('get', /\/api\/getbyid.*/, 0).stop();
-    http.expect('get', '/api/getone?id=2', 1).stop();
+    http.expect('get', '/api/getone?id=2', 1).return({data:{}});
 
     users.fetchById(2);
+
+    await users.wait();
 
     http.assert();
     t.pass();
@@ -146,25 +148,29 @@ test.group('fetchById', test => {
     t.is(user.name, '9');
     t.is(user.permission, 9);
   });
-  test('should piggyback onto a previous fetchById request if the query is the same', t => {
+  test('should piggyback onto a previous fetchById request if the query is the same', async t => {
     let {users, http} = setup(t);
     http.expect(/.*/, /.*/, 0).stop();
-    http.expect('get', '/api/getbyid/2', 1).stop();
+    http.expect('get', '/api/getbyid/2', 1).return({data:[]});
 
     users.fetchById('2');
     users.fetchById('2');
+
+    await users.wait();
 
     http.assert();
     t.pass();
   });
-  test('should piggyback ont a previous fetch request if the query is the same', t => {
+  test('should piggyback ont a previous fetch request if the query is the same', async t => {
     let {users, http} = setup(t);
-    http.expect('get', '/api/get', 1).stop();
+    http.expect('get', '/api/get', 1).return({data:[]});
     http.expect('get', /\/api\/getbyid.*/, 0).stop();
 
     users.fetch();
     users.fetchById('2');
     users.fetchById('2');
+
+    await users.wait();
 
     http.assert();
     t.pass();
@@ -182,5 +188,4 @@ test.group('fetchById', test => {
     }
     http.assert();
   });
-  test.todo('should wait until all other api calls have completed before fetching');
 });

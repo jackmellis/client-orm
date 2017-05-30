@@ -56,11 +56,9 @@ test.group('create', test => {
   });
   test('it sends a post request by default', async t => {
     let {users, http} = setup(t);
-    http.expect('post', '/api/create').stop();
+    http.expect('post', '/api/create').return({data:{}});
 
-    users.create().save();
-
-    await Promise.resolve();
+    await users.create().save();
 
     http.assert();
     t.pass();
@@ -98,7 +96,31 @@ test.group('create', test => {
 
     t.is(store.users.length, 0);
   });
-  test.todo('it waits for any other pending requests');
+  test('it waits for any other pending requests', async t => {
+    let {users, http} = setup(t);
+    let user = new users();
+    let resolve;
+    http.expect('post', '/api/create', 0);
+    http.expect('get', '/api/get', 1).call(() => {
+      return new Promise(r => {
+        resolve = r;
+      });
+    });
+    users.$collection.api.get = {method : 'get', url : '/api/get'};
+
+    users.fetch();
+    user.save();
+
+    await new Promise(resolve => setTimeout(resolve, 50));
+    http.assert();
+
+    http.expect('post', '/api/create', 1).return({});
+    resolve({data:[]});
+    await users.wait();
+
+    http.assert();
+    t.pass();
+  });
 });
 
 test.group('update', test => {
@@ -154,13 +176,11 @@ test.group('update', test => {
   });
   test('it sends a patch request by default', async t => {
     let {users, http} = setup(t);
-    http.expect('patch', '/api/update/1').stop();
+    http.expect('patch', '/api/update/1').return({data:{}});
     let user = users.getOne();
     user.name = 'changed';
 
-    user.save();
-
-    await Promise.resolve();
+    await user.save();
 
     http.assert();
     t.pass();
@@ -173,14 +193,12 @@ test.group('update', test => {
       t.is(data.name, 'changed');
       t.is(data.permission, undefined);
       t.false(Object.hasOwnProperty.call(data, 'permission'));
-      return new Promise(() => {});
+      return {data:{}};
     });
     let user = users.getOne();
     user.name = 'changed';
 
-    user.save();
-
-    await Promise.resolve();
+    await user.save();
 
     http.assert();
     t.pass();
@@ -234,5 +252,29 @@ test.group('update', test => {
     t.is(user.permission, 2);
     t.is(users.getOne().name, 'One');
   });
-  test.todo('it waits for any other pending requests');
+  test('it waits for any other pending requests', async t => {
+    let {users, http} = setup(t);
+    let user = users.getOne();
+    let resolve;
+    http.expect('patch', '/api/update/1', 0);
+    http.expect('get', '/api/get', 1).call(() => {
+      return new Promise(r => {
+        resolve = r;
+      });
+    });
+    users.$collection.api.get = {method : 'get', url : '/api/get'};
+
+    users.fetch();
+    user.save();
+
+    await new Promise(resolve => setTimeout(resolve, 50));
+    http.assert();
+
+    http.expect('patch', '/api/update/1', 1).return({});
+    resolve({data:[]});
+    await users.wait();
+
+    http.assert();
+    t.pass();
+  });
 });

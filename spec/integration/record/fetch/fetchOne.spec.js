@@ -80,7 +80,7 @@ test.group('fetchOne', test => {
 
     t.is(result, undefined);
   });
-  test('should do a regular fetch if no api address', t => {
+  test('should do a regular fetch if no api address', async t => {
     let {http} = setup(t);
     let users = t.context.db.define({
       name : 'users',
@@ -94,10 +94,12 @@ test.group('fetchOne', test => {
       }
     });
 
-    http.expect('get', /\/api\/get/, 1).stop();
+    http.expect('get', /\/api\/get/, 1).return({data:[]});
     http.expect('get', /\/api\/getone/, 0).stop();
 
     users.fetchOne();
+
+    await users.wait();
 
     http.assert();
     t.pass();
@@ -145,25 +147,29 @@ test.group('fetchOne', test => {
     let user = await users.fetchOne();
     t.is(typeof user.$set, 'function');
   });
-  test('should piggyback onto a previous fetchOne request if the query is the same', t => {
+  test('should piggyback onto a previous fetchOne request if the query is the same', async t => {
     let {users, http} = setup(t);
-    http.expect('get', '/api/getone?permission=1', 1).stop();
+    http.expect('get', '/api/getone?permission=1', 1).return({data:{}});
 
     users.fetchOne({permission:1});
     users.fetchOne({permission:1});
     users.fetchOne({permission:1});
+
+    await users.wait();
 
     http.assert();
     t.pass();
   });
-  test('should piggyback on to a previous fetch request if the query is the same', t => {
+  test('should piggyback on to a previous fetch request if the query is the same', async t => {
     let {users, http} = setup(t);
     http.expect('get', '/api/getone?permission=1', 0).stop();
-    http.expect('get', '/api/get?permission=1', 1).stop();
+    http.expect('get', '/api/get?permission=1', 1).return({data:[]});
 
     users.fetch({permission:1});
     users.fetchOne({permission:1});
     users.fetchOne({permission:1});
+
+    await users.wait();
 
     http.assert();
     t.pass();
@@ -182,5 +188,4 @@ test.group('fetchOne', test => {
 
     http.assert();
   });
-  test.todo('should wait until all other api calls have completed before fetching');
 });

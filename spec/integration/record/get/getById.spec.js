@@ -69,10 +69,11 @@ test.group('getById', test => {
     let one = users.getById('1');
     t.is(one, undefined);
   });
-  test('should attempt to fetch records', t => {
+  test('should attempt to fetch records', async t => {
     let {http, users} = setup(t);
     http.expect('/api/getbyid/4').stop();
     users.getById('4');
+    await Promise.resolve();
     http.assert();
     t.pass();
   });

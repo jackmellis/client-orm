@@ -19,7 +19,7 @@ const defaultApi = {
   }
 };
 const defaultRelationship = {
-  many : true,
+  type : 'many',
   cascade : false,
   query : {}
 };

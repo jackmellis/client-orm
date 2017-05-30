@@ -63,13 +63,15 @@ test.group('get', test => {
     let records = users.get();
     t.is(records.length, 0);
   });
-  test('should attempt to fetch records', t => {
+  test('should attempt to fetch records', async t => {
     let {users, http} = setup(t);
     let collection = users.$collection;
     sinon.spy(collection, 'fetch');
-    http.expect('/api/get?permission=2').stop();
+    http.expect('/api/get?permission=2').return({data:[]});
 
     let records = users.get({permission : 2});
+
+    await users.wait();
 
     t.true(collection.fetch.called);
     t.true(collection.fetch.calledWith({permission : 2}));
@@ -119,6 +121,4 @@ test.group('get', test => {
     records = users.get({permission : 999});
     t.is(records.length, 0);
   });
-  test.todo('returned list should have a then property invoked when the fetch succeeds');
-  test.todo('if fetch is up to date, then just resolves with the current list');
 });

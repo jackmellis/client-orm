@@ -74,8 +74,9 @@ test.group('fetch', test => {
   });
   test('should fetch results from the api with a query', async t => {
     let {users, http} = setup(t);
-    http.expect('get', '/api/get?permission=4').stop();
+    http.expect('get', '/api/get?permission=4').return({data:[]});
     users.fetch({permission:4});
+    await users.wait();
     http.assert();
     t.pass();
   });
@@ -95,11 +96,13 @@ test.group('fetch', test => {
   test('should piggyback onto a previous fetch request if the query is the same', async t => {
     let {users, http} = setup(t);
 
-    http.expect('get', /\/api\/get\?permission=1/, 1).stop();
+    http.expect('get', /\/api\/get\?permission=1/, 1).return({data:[]});
 
     users.fetch({permission : 1});
     users.fetch({permission : 1});
     users.fetch({permission : 1});
+
+    await users.wait();
 
     http.assert();
     t.pass();
@@ -108,12 +111,14 @@ test.group('fetch', test => {
     let {users, http} = setup(t);
 
     http.expect('get', '/api/get?permission=1', 0).stop();
-    http.expect('get', '/api/get', 1).stop();
+    http.expect('get', '/api/get', 1).return({data:[]});
 
     users.fetch();
     users.fetch({permission : 1});
     users.fetch();
     users.fetch({permission : 1});
+
+    await users.wait();
 
     http.assert();
     t.pass();
@@ -168,5 +173,4 @@ test.group('fetch', test => {
       t.is(error, err);
     }
   });
-  test.todo('should wait until all other api calls have completed before fetching');
 });

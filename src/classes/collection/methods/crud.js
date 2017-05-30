@@ -45,33 +45,35 @@ exports.remove = function (record) {
 exports.create = function (record) {
   const idField = this.primaryKey;
 
-  return this.$promise.resolve()
-    .then(() => {
-      if (this.api.create && this.http){
-        let obj = this.getPlainObject(record);
-        return this.http({
-          url : this.api.create.url,
-          method : this.api.create.method,
-          data : obj
-        }).then(response => {
-          if (response.data){
-            return response.data;
-          }else{
-            return record.toObject();
-          }
-        });
-      }else{
-        return record.toObject();
-      }
-    })
-    .then(response => {
-      return this.add(response);
-    })
-    .then(response => {
-      record.$changes = {};
-      record.$set(response.$proxy);
-      return record;
-    });
+  return this.queue(() => {
+    return this.$promise.resolve()
+      .then(() => {
+        if (this.api.create && this.http){
+          let obj = this.getPlainObject(record);
+          return this.http({
+            url : this.api.create.url,
+            method : this.api.create.method,
+            data : obj
+          }).then(response => {
+            if (response.data){
+              return response.data;
+            }else{
+              return record.toObject();
+            }
+          });
+        }else{
+          return record.toObject();
+        }
+      })
+      .then(response => {
+        return this.add(response);
+      })
+      .then(response => {
+        record.$changes = {};
+        record.$set(response.$proxy);
+        return record;
+      });
+  });
 };
 
 exports.update = function (record) {
@@ -93,35 +95,37 @@ exports.update = function (record) {
     returnable = this.$promise.resolve();
   }
 
-  return returnable
-    .then(() => {
-      // send an update request to the api
-      if (this.api.update && this.http){
-        let url = this.$urlBuilder.buildUrl(this.api.update.url, params);
+  return this.queue(() => {
+    return returnable
+      .then(() => {
+        // send an update request to the api
+        if (this.api.update && this.http){
+          let url = this.$urlBuilder.buildUrl(this.api.update.url, params);
 
-        return this.http({
-          url : url,
-          method : this.api.update.method,
-          data : obj
-        })
-        .then(response => {
-          // the response may contain amended values, so update the record with them
-          if (response.data && response.data[idField]){
-            this.add(response.data);
-            return record;
-          }
-        });
-      }else{
-        return record;
-      }
-    })
-    .catch(err => {
-      // restore the original stored value
-      this.add(backup);
-      // restore the record's changes property
-      record.$changes = changes;
-      throw err;
-    });
+          return this.http({
+            url : url,
+            method : this.api.update.method,
+            data : obj
+          })
+          .then(response => {
+            // the response may contain amended values, so update the record with them
+            if (response.data && response.data[idField]){
+              this.add(response.data);
+              return record;
+            }
+          });
+        }else{
+          return record;
+        }
+      })
+      .catch(err => {
+        // restore the original stored value
+        this.add(backup);
+        // restore the record's changes property
+        record.$changes = changes;
+        throw err;
+      });
+  });
 };
 
 exports.delete = function (record) {
@@ -130,26 +134,43 @@ exports.delete = function (record) {
   const id = record[idField];
   const params = {};
   params[idField] = id;
+  const relationships = this.relationships.filter(r => r.cascade);
 
   let returnable = this.remove(record);
   if (!returnable || !returnable.then || !returnable.catch){
     returnable = this.$promise.resolve();
   }
 
-  return returnable
-    .then(() => {
-      if (this.api.delete && this.http){
-        let url = this.$urlBuilder.buildUrl(this.api.delete.url, params);
+  return this.queue(() => {
+    return returnable
+      .then(() => {
+        if (this.api.delete && this.http){
+          let url = this.$urlBuilder.buildUrl(this.api.delete.url, params);
 
-        return this.http({
-          url,
-          method : this.api.delete.method
-        });
-      }
+          return this.http({
+            url,
+            method : this.api.delete.method
+          });
+        }
+      })
+      .catch(err => {
+        // restore the original stored value
+        this.add(backup);
+        throw err;
+      });
     })
-    .catch(err => {
-      // restore the original stored value
-      this.add(backup);
-      throw err;
+    .then(() => {
+      return this.$promise.all(relationships.map(r => {
+        const name = 'fetch' + r.name.charAt(0).toUpperCase() + r.name.substr(1);
+        return record[name]().then(children => {
+          return this.$promise.all([].concat(children || []).map(child => {
+            if (r.cascade === 'soft'){
+              return child.remove();
+            }else{
+              return child.delete();
+            }
+          }));
+        });
+      }));
     });
 };

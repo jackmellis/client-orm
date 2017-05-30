@@ -69,10 +69,11 @@ test.group('getOne', test => {
     let one = users.getOne();
     t.is(one, undefined);
   });
-  test('should attempt to fetch records', t => {
+  test('should attempt to fetch records', async t => {
     let {users, http} = setup(t);
     http.expect('/api/getone?permission=9').stop();
     let one = users.getOne({permission:9});
+    await Promise.resolve();
     http.assert();
     t.pass();
   });

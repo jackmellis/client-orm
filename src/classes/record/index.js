@@ -94,6 +94,10 @@ var Record = Base.extend({
     // fetches record with matching id from the api (async)
     fetchById(id){
       return this.$collection.fetchById(id);
+    },
+    // waits for all current tasks to complete
+    wait(){
+      return this.$collection.queue(() => {});
     }
   },
   methods : {

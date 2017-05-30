@@ -1,3 +1,27 @@
+exports.queue = function (callback) {
+  var promise = this.$promise((resolve, reject) => {
+    this.$queue.push({resolve, reject});
+  })
+  .then(callback)
+  .then(result => {
+    this.$queue.shift();
+    var next = this.$queue[0];
+    next && next.resolve && next.resolve();
+    return result;
+  }, err => {
+    this.$queue.shift();
+    var next = this.$queue[0];
+    next && next.resolve && next.resolve();
+    throw err;
+  });
+
+  if (this.$queue.length === 1){
+    this.$queue[0].resolve();
+  }
+
+  return promise;
+};
+
 exports.filterResults = function (results, query) {
   const Record = this.Record;
   const keys = query ? Object.keys(query) : [];
@@ -17,7 +41,7 @@ exports.getCache = function (query) {
   var key = query || (this.api.get && this.api.get.url);
   var result = this.cache[key];
 
-  if (!result && query){
+  if (!result && query && this.api.get){
     key = this.api.get.url + query.substr(query.indexOf('?'));
     if (key === query){
       return this.getCache();
