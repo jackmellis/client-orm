@@ -82,6 +82,7 @@ var Record = Base.extend({
 
       properties[key] = {
         enumerable : true,
+        configurable : true,
         get(){
           if (Object.hasOwnProperty.call(this.$changes, key)){
             return this.$changes[key];
