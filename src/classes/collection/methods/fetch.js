@@ -5,8 +5,8 @@ function doFetch(url) {
       return this.$promise((resolve, reject) => {
         cached.promises.push({resolve, reject});
       });
-    }else if (cached.result){
-      return this.$promise.resolve(cached.result);
+    }else{
+      return this.$promise.resolve(this.records);
     }
   }
   if (url && this.http){
@@ -18,9 +18,6 @@ function doFetch(url) {
 
         return this.$promise
           .all(result.map(row => this.add(row)))
-          .then(records => {
-            cached.result = records.map(r => r.$proxy);
-          })
           .then(() => {
             let records = this.records;
             let promises = cached.promises;
