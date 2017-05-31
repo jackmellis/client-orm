@@ -14,14 +14,17 @@ function doFetch(url) {
 
     return this.http({url, method : 'get'})
       .then(response => {
-        cached.timestamp = Date.now();
-        cached.result = [].concat(response.data);
+        const result = [].concat(response.data);
 
         return this.$promise
-          .all(cached.result.map(row => this.add(row)))
+          .all(result.map(row => this.add(row)))
+          .then(records => {
+            cached.result = records.map(r => r.$proxy);
+          })
           .then(() => {
             let records = this.records;
             let promises = cached.promises;
+            cached.timestamp = Date.now();
             cached.promises = null;
             promises.forEach(p => p.resolve(records));
             return records;
