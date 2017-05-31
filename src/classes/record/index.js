@@ -2,6 +2,40 @@ function coerce(types, key, value) {
   if (value === null || value === undefined){
     return value;
   }
+  // Check if value is already the correct type
+  for (let x = 0; x < types.length; x++){
+    let type = types[x];
+    switch(type){
+    case String:
+      if (typeof value === 'string'){
+        return value;
+      }
+      break;
+    case Number:
+      if (typeof value === 'number'){
+        return value;
+      }
+      break;
+    case Array:
+      if (Array.isArray(value)){
+        return value;
+      }
+      break;
+    case Boolean:
+      if (typeof value === 'boolean'){
+        return value;
+      }
+      break;
+    case Date:
+      if (value instanceof Date){
+        return value;
+      }
+      break;
+    default:
+      return value;
+    }
+  }
+  // Try to coerce the value into a valid type
   for (let x = 0; x < types.length; x++){
     let coerced = value;
     let type = types[x];
@@ -13,7 +47,7 @@ function coerce(types, key, value) {
     case Number:
       coerced = +value;
       if (isNaN(coerced)){
-        throw new Error(`${coerced} is not a number`);
+        break;
       }
       return coerced;
 
@@ -22,6 +56,13 @@ function coerce(types, key, value) {
 
     case Boolean:
       return !!value;
+
+    case Date:
+      coerced = new Date(value);
+      if (isNaN(coerced.getTime())){
+        break;
+      }
+      return coerced;
 
     default:
       return value;
@@ -45,7 +86,7 @@ var Record = Base.extend({
           if (Object.hasOwnProperty.call(this.$changes, key)){
             return this.$changes[key];
           }else{
-            return this.$proxy[key];
+            return coerce(types, key, this.$proxy[key]);
           }
         },
         set(v){
