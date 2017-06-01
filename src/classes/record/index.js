@@ -113,6 +113,12 @@ var Record = Base.extend({
     create(options){
       return new this(options);
     },
+    // adds multiple records to the db
+    add(rows){
+      const isArray = Array.isArray(rows);
+      const result = [].concat(rows || []).map(row => this.create(row).add());
+      return isArray ? result : result.find(() => true);
+    },
     // returns synchronous list of records from this collection
     get(query){
       return this.$collection.get(query);
