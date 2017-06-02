@@ -49,7 +49,7 @@ exports.create = function (record) {
     return this.$promise.resolve()
       .then(() => {
         if (this.beforeCreate){
-          this.beforeCreate(obj);
+          this.beforeCreate(record);
         }
 
         if (this.api.create && this.http){
@@ -81,6 +81,10 @@ exports.create = function (record) {
 };
 
 exports.update = function (record) {
+  if (this.beforeUpdate){
+    this.beforeUpdate(record);
+  }
+  
   const backup = Object.assign({}, record.$proxy);
   const changes = record.$changes;
   const obj = Object.assign({}, changes);
@@ -92,10 +96,6 @@ exports.update = function (record) {
 
   // clear the record's changes as they will hopefully be re-set as committed values
   record.$changes = {};
-
-  if (this.beforeUpdate){
-    this.beforeUpdate(obj);
-  }
 
   // update the local store first
   let returnable = this.add(obj);
