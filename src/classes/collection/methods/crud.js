@@ -11,14 +11,8 @@ exports.add = function (record) {
 
   let result;
   if (index < 0){
-    if (this.beforeCreate){
-      this.beforeCreate(obj);
-    }
     result = storage.create(store, name, obj, idField);
   }else{
-    if (this.beforeUpdate){
-      this.beforeUpdate(obj);
-    }
     result = storage.update(store, name, obj, idField);
   }
 
@@ -54,6 +48,10 @@ exports.create = function (record) {
   return this.queue(() => {
     return this.$promise.resolve()
       .then(() => {
+        if (this.beforeCreate){
+          this.beforeCreate(obj);
+        }
+
         if (this.api.create && this.http){
           let obj = this.getPlainObject(record);
           return this.http({
@@ -94,6 +92,10 @@ exports.update = function (record) {
 
   // clear the record's changes as they will hopefully be re-set as committed values
   record.$changes = {};
+
+  if (this.beforeUpdate){
+    this.beforeUpdate(obj);
+  }
 
   // update the local store first
   let returnable = this.add(obj);
