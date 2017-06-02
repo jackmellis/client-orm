@@ -146,6 +146,10 @@ var Record = Base.extend({
     // waits for all current tasks to complete
     wait(){
       return this.$collection.queue(() => {});
+    },
+    // clears all cached results
+    invalidate(){
+      this.$collection.cache = {};
     }
   },
   methods : {
