@@ -11,8 +11,14 @@ exports.add = function (record) {
 
   let result;
   if (index < 0){
+    if (this.beforeCreate){
+      this.beforeCreate(obj);
+    }
     result = storage.create(store, name, obj, idField);
   }else{
+    if (this.beforeUpdate){
+      this.beforeUpdate(obj);
+    }
     result = storage.update(store, name, obj, idField);
   }
 

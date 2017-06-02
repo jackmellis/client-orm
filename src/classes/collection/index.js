@@ -14,15 +14,19 @@ var Collection = Base.extend({
     '_fields_',
     '_relationships_',
     '_primaryKey_',
+    '_beforeCreate_',
+    '_beforeUpdate_',
     '$urlBuilder'
   ],
-  constructor($promise, db, http, collectionSetup, recordExtender, name, timeToLive, api, fields, relationships, primaryKey, $urlBuilder){
+  constructor($promise, db, http, collectionSetup, recordExtender, name, timeToLive, api, fields, relationships, primaryKey, beforeCreate, beforeUpdate, $urlBuilder){
     this.$promise = $promise;
     this.db = db;
     this.http = http;
     this.timeToLive = timeToLive;
     this.$urlBuilder = $urlBuilder;
     this.$queue = [];
+    this.beforeCreate = beforeCreate;
+    this.beforeUpdate = beforeUpdate;
 
     this.name = collectionSetup.setName(name);
     this.api = collectionSetup.setApi(api);
