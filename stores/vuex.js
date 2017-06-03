@@ -9,18 +9,18 @@ module.exports = function (store) {
           data : []
         },
         mutations : {
-          CREATE(state, payload){
+          CREATE : function(state, payload){
             state.data.push(payload.data);
             return state.data[state.data.length-1];
           },
-          UPDATE(state, payload){
+          UPDATE : function(state, payload){
             var index = payload.index;
             var existing = state.data[index];
             Object.assign(existing, payload.data);
             state.data.splice(index, 1, existing);
             return existing;
           },
-          DELETE(state, payload){
+          DELETE : function(state, payload){
             state.data.splice(payload.index, 1);
           }
         }

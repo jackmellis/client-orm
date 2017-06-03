@@ -9,20 +9,20 @@ module.exports = function(store){
   store = store || {};
   return {
     store,
-    get(store, name) {
+    get : function(store, name) {
       if (!store[name]){
         store[name] = [];
       }
       return store[name];
     },
-    create(store, name, payload, idField) {
+    create : function(store, name, payload, idField) {
       if (!payload[idField]){
         payload[idField] = makeId();
       }
       store[name] = store[name].concat(payload);
       return payload;
     },
-    update(store, name, payload, idField) {
+    update : function(store, name, payload, idField) {
       var index = store[name]
         .map(row => row[idField])
         .indexOf(payload[idField]);
@@ -32,7 +32,7 @@ module.exports = function(store){
       store[name].splice(index, 1, original);
       return original;
     },
-    delete(store, name, payload, idField) {
+    delete : function(store, name, payload, idField) {
       var index = store[name]
         .map(row => row[idField])
         .indexOf(payload[idField]);
