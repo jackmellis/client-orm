@@ -17,5 +17,9 @@ module.exports = {
       }
     ]
   },
-  externals : ['jpex', 'jpex-defaults']
+  externals :
+  {
+    'jpex' : 'commonjs jpex',
+    'jpex-defaults' : 'commonjs jpex-defaults'
+  }
 };

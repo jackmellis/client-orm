@@ -1318,13 +1318,13 @@ module.exports = function (store) {
 /* 19 */
 /***/ (function(module, exports) {
 
-module.exports = jpex;
+module.exports = require("jpex");
 
 /***/ }),
 /* 20 */
 /***/ (function(module, exports) {
 
-module.exports = jpex-defaults;
+module.exports = require("jpex-defaults");
 
 /***/ })
 /******/ ]);
