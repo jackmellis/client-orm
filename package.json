@@ -2,11 +2,12 @@
   "name": "client-orm",
   "version": "0.1.0",
   "description": "Manage client-server record synchronisation",
-  "main": "src/index.js",
+  "main": "dist/client-orm",
   "scripts": {
     "test": "ava",
-    "watch" : "npm test -- --watch",
-    "debug" : "inspect node_modules/ava/profile"
+    "watch": "npm test -- --watch",
+    "debug": "inspect node_modules/ava/profile",
+    "build": "webpack --config build/webpack.config.js"
   },
   "ava": {
     "files": [
@@ -32,14 +33,17 @@
     "url": "https://github.com/jackmellis/client-orm/issues"
   },
   "homepage": "https://github.com/jackmellis/client-orm#readme",
-  "dependencies": {
-    "jpex": "^2.0.0",
-    "jpex-defaults": "^2.0.0"
-  },
   "devDependencies": {
     "ava": "^0.19.1",
     "ava-spec": "^1.1.0",
+    "babel-loader": "^7.0.0",
+    "babel-preset-env": "^1.5.1",
     "mock-http-client": "^0.1.0",
-    "sinon": "^2.3.1"
+    "sinon": "^2.3.1",
+    "webpack": "^2.6.1"
+  },
+  "peerDependencies" : {
+    "jpex" : "^2.0.0",
+    "jpex-defaults" : "^2.0.0"
   }
 }
