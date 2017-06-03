@@ -36,14 +36,14 @@ module.exports = function (store) {
     var index = store.state[name].data.map(function(row){
       return row[idField];
     }).indexOf(payload[idField]);
-    store.commit(name + '/UPDATE', {index, data : payload});
+    store.commit(name + '/UPDATE', {index : index, data : payload});
     return store.state[name].data[index];
   };
   storage.delete = function (store, name, payload, idField) {
     var index = store.state[name].data.map(function(row){
       return row[idField];
     }).indexOf(payload[idField]);
-    store.commit(name + '/DELETE', {index});
+    store.commit(name + '/DELETE', {index : index});
   };
   return storage;
 };
