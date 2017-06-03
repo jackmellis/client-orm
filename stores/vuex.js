@@ -34,14 +34,14 @@ module.exports = function (store) {
   };
   storage.update = function (store, name, payload, idField) {
     var index = store.state[name].data.map(function(row){
-      return row[idField]
-    }).indexOf(payload[idField];
+      return row[idField];
+    }).indexOf(payload[idField]);
     store.commit(name + '/UPDATE', {index, data : payload});
     return store.state[name].data[index];
   };
   storage.delete = function (store, name, payload, idField) {
-    var index = store.state[name].data.map(fucntion(row){
-      return row[idField]
+    var index = store.state[name].data.map(function(row){
+      return row[idField];
     }).indexOf(payload[idField]);
     store.commit(name + '/DELETE', {index});
   };
