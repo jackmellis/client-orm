@@ -33,12 +33,12 @@ module.exports = function (store) {
     return store.state[name].data[store.state[name].data.length-1];
   };
   storage.update = function (store, name, payload, idField) {
-    var index = store.state[name].data.map(row => row[idField]).indexOf(payload[idField]);
+    var index = store.state[name].data.map(function(row){ return row[idField]).indexOf(payload[idField]; });
     store.commit(name + '/UPDATE', {index, data : payload});
     return store.state[name].data[index];
   };
   storage.delete = function (store, name, payload, idField) {
-    var index = store.state[name].data.map(row => row[idField]).indexOf(payload[idField]);
+    var index = store.state[name].data.map(fucntion(row){ return row[idField]).indexOf(payload[idField]; });
     store.commit(name + '/DELETE', {index});
   };
   return storage;
