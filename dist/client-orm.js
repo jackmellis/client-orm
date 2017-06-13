@@ -259,6 +259,8 @@ Base.register.service('collectionSetup', [], function () {
       var value = api[key];
       if (typeof value === 'string') {
         value = { url: value };
+      } else if (Array.isArray(value)) {
+        return;
       }
       api[key] = Object.assign({}, defaultApi[key], value);
     });
