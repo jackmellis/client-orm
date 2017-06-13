@@ -9,7 +9,7 @@ exports.buildUrl = function (url, params, query) {
         case 'function':
           return alias.resolve.apply(null, match);
         case 'string':
-          return alias.resolve.replace(alias.match, alias.resolve);
+          return result.replace(alias.match, alias.resolve);
         }
       }
     }
