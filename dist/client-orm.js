@@ -414,7 +414,7 @@ exports.update = function (record) {
     return returnable.then(function () {
       // send an update request to the api
       if (_this2.api.update && _this2.http) {
-        var url = _this2.$urlBuilder.buildUrl(_this2.api.update.url, params);
+        var url = _this2.buildUrl(_this2.api.update.url, params);
 
         return _this2.http({
           url: url,
@@ -460,7 +460,7 @@ exports.delete = function (record) {
   return this.queue(function () {
     return returnable.then(function () {
       if (_this3.api.delete && _this3.http) {
-        var url = _this3.$urlBuilder.buildUrl(_this3.api.delete.url, params);
+        var url = _this3.buildUrl(_this3.api.delete.url, params);
 
         return _this3.http({
           url: url,
@@ -544,7 +544,7 @@ exports.getUrl = function (query) {
   if (!url) {
     return '';
   }
-  return this.$urlBuilder.buildUrl(url, null, query);
+  return this.buildUrl(url, query, query);
 };
 
 exports.getOneUrl = function (query) {
@@ -552,7 +552,7 @@ exports.getOneUrl = function (query) {
   if (!url) {
     return '';
   }
-  return this.$urlBuilder.buildUrl(url, query, query);
+  return this.buildUrl(url, query, query);
 };
 
 exports.getByIdUrl = function (id) {
@@ -562,7 +562,7 @@ exports.getByIdUrl = function (id) {
   }
   var query = {};
   query[this.primaryKey] = id;
-  return this.$urlBuilder.buildUrl(url, query);
+  return this.buildUrl(url, query);
 };
 
 exports.fetch = function (query) {
@@ -687,6 +687,27 @@ module.exports = Object.assign({}, internal, crud, get, fetch);
 
 "use strict";
 
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+exports.buildUrl = function (url, params, query) {
+  var result = this.$urlBuilder.buildUrl(url, params, query);
+  if (this.api.alias) {
+    for (var x = 0; x < this.api.alias.length; x++) {
+      var alias = this.api.alias[x];
+      var match = result.match(alias.match);
+      if (match) {
+        switch (_typeof(alias.resolve)) {
+          case 'function':
+            return alias.resolve.apply(null, match);
+          case 'string':
+            return alias.resolve.replace(alias.match, alias.resolve);
+        }
+      }
+    }
+  }
+  return result;
+};
 
 exports.queue = function (callback) {
   var _this = this;
