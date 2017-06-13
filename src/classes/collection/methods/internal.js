@@ -1,3 +1,22 @@
+exports.buildUrl = function (url, params, query) {
+  let result = this.$urlBuilder.buildUrl(url, params, query);
+  if (this.api.alias){
+    for (let x = 0; x < this.api.alias.length; x++){
+      let alias = this.api.alias[x];
+      let match = result.match(alias.match);
+      if (match){
+        switch (typeof alias.resolve){
+        case 'function':
+          return alias.resolve.apply(null, match);
+        case 'string':
+          return alias.resolve.replace(alias.match, alias.resolve);
+        }
+      }
+    }
+  }
+  return result;
+};
+
 exports.queue = function (callback) {
   var promise = this.$promise((resolve, reject) => {
     this.$queue.push({resolve, reject});

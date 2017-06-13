@@ -84,7 +84,7 @@ exports.update = function (record) {
   if (this.beforeUpdate){
     this.beforeUpdate(record);
   }
-  
+
   const backup = Object.assign({}, record.$proxy);
   const changes = record.$changes;
   const obj = Object.assign({}, changes);
@@ -108,7 +108,7 @@ exports.update = function (record) {
       .then(() => {
         // send an update request to the api
         if (this.api.update && this.http){
-          let url = this.$urlBuilder.buildUrl(this.api.update.url, params);
+          let url = this.buildUrl(this.api.update.url, params);
 
           return this.http({
             url : url,
@@ -153,7 +153,7 @@ exports.delete = function (record) {
     return returnable
       .then(() => {
         if (this.api.delete && this.http){
-          let url = this.$urlBuilder.buildUrl(this.api.delete.url, params);
+          let url = this.buildUrl(this.api.delete.url, params);
 
           return this.http({
             url,

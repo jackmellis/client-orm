@@ -43,7 +43,7 @@ exports.getUrl = function (query) {
   if (!url){
     return '';
   }
-  return this.$urlBuilder.buildUrl(url, null, query);
+  return this.buildUrl(url, query, query);
 };
 
 exports.getOneUrl = function (query) {
@@ -51,7 +51,7 @@ exports.getOneUrl = function (query) {
   if (!url){
     return '';
   }
-  return this.$urlBuilder.buildUrl(url, query, query);
+  return this.buildUrl(url, query, query);
 };
 
 exports.getByIdUrl = function (id) {
@@ -61,7 +61,7 @@ exports.getByIdUrl = function (id) {
   }
   var query = {};
   query[this.primaryKey] = id;
-  return this.$urlBuilder.buildUrl(url, query);
+  return this.buildUrl(url, query);
 };
 
 exports.fetch = function (query) {
