@@ -31,12 +31,12 @@ Base.register.service('$urlBuilder', [], function () {
     if (url.indexOf('?') > -1){
       oper = '&';
     }
-    return url + oper + Object.keys(query).map(key => {
+    return url + oper + Object.keys(query).map((key, index) => {
       const value = query[key];
       const isArray = Array.isArray(value);
 
       const left = encodeURIComponent(key);
-      const oper = isArray ? '[]=' : '=';
+      const oper = isArray ? '[' + index + ']=' : '=';
       const right = isArray ? value : [value];
 
       return right.map(value => left + oper + encodeURIComponent(value)).join('&');
