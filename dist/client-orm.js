@@ -1271,16 +1271,15 @@ Base.register.service('$urlBuilder', [], function () {
     if (url.indexOf('?') > -1) {
       oper = '&';
     }
-    return url + oper + Object.keys(query).map(function (key, index) {
+    return url + oper + Object.keys(query).map(function (key) {
       var value = query[key];
       var isArray = Array.isArray(value);
 
       var left = encodeURIComponent(key);
-      var oper = isArray ? '[' + index + ']=' : '=';
       var right = isArray ? value : [value];
 
-      return right.map(function (value) {
-        return left + oper + encodeURIComponent(value);
+      return right.map(function (value, index) {
+        return left + (isArray ? '[' + index + ']=' : '=') + encodeURIComponent(value);
       }).join('&');
     }).join('&');
   };

@@ -31,15 +31,15 @@ Base.register.service('$urlBuilder', [], function () {
     if (url.indexOf('?') > -1){
       oper = '&';
     }
-    return url + oper + Object.keys(query).map((key, index) => {
+    return url + oper + Object.keys(query).map(key => {
       const value = query[key];
       const isArray = Array.isArray(value);
 
       const left = encodeURIComponent(key);
-      const oper = isArray ? '[' + index + ']=' : '=';
       const right = isArray ? value : [value];
 
-      return right.map(value => left + oper + encodeURIComponent(value)).join('&');
+
+      return right.map((value, index) => left + (isArray ? `[${index}]=` : '=') + encodeURIComponent(value)).join('&');
     }).join('&');
   };
 }).lifecycle.application();
