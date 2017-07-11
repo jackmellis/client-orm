@@ -39,7 +39,7 @@ Base.register.service('$urlBuilder', [], function () {
       const right = isArray ? value : [value];
 
 
-      return right.map((value, index) => left + (isArray ? `[${index}]=` : '=') + encodeURIComponent(value)).join('&');
+      return right.map((value, index) => left + '=' + encodeURIComponent(value)).join('&');
     }).join('&');
   };
 }).lifecycle.application();

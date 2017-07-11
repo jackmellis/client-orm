@@ -1279,7 +1279,7 @@ Base.register.service('$urlBuilder', [], function () {
       var right = isArray ? value : [value];
 
       return right.map(function (value, index) {
-        return left + (isArray ? '[' + index + ']=' : '=') + encodeURIComponent(value);
+        return left + '=' + encodeURIComponent(value);
       }).join('&');
     }).join('&');
   };
