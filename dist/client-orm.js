@@ -1271,12 +1271,12 @@ Base.register.service('$urlBuilder', [], function () {
     if (url.indexOf('?') > -1) {
       oper = '&';
     }
-    return url + oper + Object.keys(query).map(function (key) {
+    return url + oper + Object.keys(query).map(function (key, index) {
       var value = query[key];
       var isArray = Array.isArray(value);
 
       var left = encodeURIComponent(key);
-      var oper = isArray ? '[]=' : '=';
+      var oper = isArray ? '[' + index + ']=' : '=';
       var right = isArray ? value : [value];
 
       return right.map(function (value) {
