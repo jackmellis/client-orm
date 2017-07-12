@@ -187,12 +187,13 @@ test.group('update', test => {
   });
   test('it only sends fields that have changed', async t => {
     let {users, http} = setup(t);
-    t.plan(4);
+    t.plan(5);
     http.expect('patch', '/api/update/1').call(config => {
       const data = config.data;
-      t.is(data.name, 'changed');
-      t.is(data.permission, undefined);
-      t.false(Object.hasOwnProperty.call(data, 'permission'));
+      t.true(Array.isArray(data));
+      t.is(data.length, 1);
+      t.is(data[0].path, '/name');
+      t.is(data[0].value, 'changed');
       return {data:{}};
     });
     let user = users.getOne();
