@@ -403,6 +403,14 @@ exports.update = function (record) {
   obj[idField] = id;
   params[idField] = id;
 
+  var transactions = Object.keys(changes).map(function (key) {
+    return {
+      op: 'replace',
+      path: '/' + key,
+      value: changes[key]
+    };
+  });
+
   // clear the record's changes as they will hopefully be re-set as committed values
   record.$changes = {};
 
@@ -421,7 +429,7 @@ exports.update = function (record) {
         return _this2.http({
           url: url,
           method: _this2.api.update.method,
-          data: obj
+          data: transactions
         }).then(function (response) {
           // the response may contain amended values, so update the record with them
           if (response.data && response.data[idField]) {
