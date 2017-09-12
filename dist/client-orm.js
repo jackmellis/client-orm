@@ -403,6 +403,7 @@ exports.update = function (record) {
   obj[idField] = id;
   params[idField] = id;
 
+  var newState = Object.assign({}, record, changes);
   var transactions = Object.keys(changes).map(function (key) {
     return {
       op: 'replace',
@@ -429,7 +430,7 @@ exports.update = function (record) {
         return _this2.http({
           url: url,
           method: _this2.api.update.method,
-          data: transactions
+          data: _this2.api.update.method.toLowerCase() === 'patch' ? transactions : newState
         }).then(function (response) {
           // the response may contain amended values, so update the record with them
           if (response.data && response.data[idField]) {

@@ -94,6 +94,7 @@ exports.update = function (record) {
   obj[idField] = id;
   params[idField] = id;
 
+  const newState = Object.assign({}, record, changes);
   const transactions = Object.keys(changes).map(key => {
     return {
       op : 'replace',
@@ -121,7 +122,7 @@ exports.update = function (record) {
           return this.http({
             url : url,
             method : this.api.update.method,
-            data : transactions
+            data : (this.api.update.method.toLowerCase() === 'patch' ? transactions : newState)
           })
           .then(response => {
             // the response may contain amended values, so update the record with them

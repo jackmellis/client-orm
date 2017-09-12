@@ -124,7 +124,8 @@ test.group('create', test => {
 });
 
 test.group('update', test => {
-  function setup(t){
+  function setup(t, method){
+    method = method || 'patch';
     let store = {
       users : [
         {
@@ -145,7 +146,10 @@ test.group('update', test => {
         permission : Number
       },
       api : {
-        update : '/api/update/{id}'
+        update : {
+          url: '/api/update/{id}',
+          method
+        }
       }
     });
 
@@ -185,7 +189,7 @@ test.group('update', test => {
     http.assert();
     t.pass();
   });
-  test('it only sends fields that have changed', async t => {
+  test('when patching, it only sends fields that have changed', async t => {
     let {users, http} = setup(t);
     t.plan(5);
     http.expect('patch', '/api/update/1').call(config => {
@@ -194,6 +198,28 @@ test.group('update', test => {
       t.is(data.length, 1);
       t.is(data[0].path, '/name');
       t.is(data[0].value, 'changed');
+      return {data:{}};
+    });
+    let user = users.getOne();
+    user.name = 'changed';
+
+    await user.save();
+
+    http.assert();
+    t.pass();
+  });
+  test('when putting, it sends the new state of the model', async t => {
+    let {users, http} = setup(t, 'put');
+    t.plan(3);
+    http.expect('put', '/api/update/1').call(config => {
+      const data = config.data;
+
+      t.true(data instanceof Object);
+      t.deepEqual(data, {
+        id : '1',
+        name : 'changed',
+        permission : 1
+      });
       return {data:{}};
     });
     let user = users.getOne();
