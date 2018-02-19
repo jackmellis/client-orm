@@ -106,7 +106,7 @@ var Collection = Base.extend({
     this.beforeUpdate = beforeUpdate;
 
     this.name = collectionSetup.setName(name);
-    this.api = collectionSetup.setApi(api);
+    this.api = collectionSetup.setApi(Object.assign({}, api));
     this.fields = collectionSetup.setFields(fields);
     this.relationships = collectionSetup.setRelationships(relationships);
     this.primaryKey = collectionSetup.setPrimaryKey(primaryKey);
