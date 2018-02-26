@@ -54,12 +54,12 @@ exports.getOneUrl = function (query) {
   return this.buildUrl(url, query, query);
 };
 
-exports.getByIdUrl = function (id) {
-  var url = this.api.getById && this.api.getById.url;
+exports.getByIdUrl = function (id, params) {
+  let url = this.api.getById && this.api.getById.url;
   if (!url){
     return '';
   }
-  var query = {};
+  const query = Object.assign({}, params);
   query[this.primaryKey] = id;
   return this.buildUrl(url, query);
 };
@@ -93,11 +93,11 @@ exports.fetchOne = function (query) {
     .then(results => results.find(() => true));
 };
 
-exports.fetchById = function (id) {
+exports.fetchById = function (id, params) {
   const idField = this.primaryKey;
   const query = {};
   query[idField] = id;
-  const url = this.getByIdUrl(id);
+  const url = this.getByIdUrl(id, params);
 
   if (!url){
     return this.fetchOne(query);

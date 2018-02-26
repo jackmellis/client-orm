@@ -1,6 +1,6 @@
 {
   "name": "client-orm",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Manage client-server record synchronisation",
   "main": "dist/client-orm",
   "scripts": {
