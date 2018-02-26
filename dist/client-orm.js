@@ -566,12 +566,12 @@ exports.getOneUrl = function (query) {
   return this.buildUrl(url, query, query);
 };
 
-exports.getByIdUrl = function (id) {
+exports.getByIdUrl = function (id, params) {
   var url = this.api.getById && this.api.getById.url;
   if (!url) {
     return '';
   }
-  var query = {};
+  var query = Object.assign({}, params);
   query[this.primaryKey] = id;
   return this.buildUrl(url, query);
 };
@@ -614,13 +614,13 @@ exports.fetchOne = function (query) {
   });
 };
 
-exports.fetchById = function (id) {
+exports.fetchById = function (id, params) {
   var _this4 = this;
 
   var idField = this.primaryKey;
   var query = {};
   query[idField] = id;
-  var url = this.getByIdUrl(id);
+  var url = this.getByIdUrl(id, params);
 
   if (!url) {
     return this.fetchOne(query);
@@ -662,14 +662,14 @@ exports.getOne = function (query) {
   });
 };
 
-exports.getById = function (id) {
+exports.getById = function (id, params) {
   if (id === undefined) {
     throw new Error('getById must be called with an id');
   }
 
   var query = {};
   query[this.primaryKey] = id;
-  var url = this.getByIdUrl(id);
+  var url = this.getByIdUrl(id, params);
   if (this.needsFetching(url)) {
     this.fetchById(id);
   }
