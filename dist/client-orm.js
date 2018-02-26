@@ -1110,8 +1110,8 @@ module.exports = {
   },
 
   // returns record with matching id (synchronous)
-  getById: function getById(id) {
-    return this.$collection.getById(id);
+  getById: function getById(id, params) {
+    return this.$collection.getById(id, params);
   },
 
   // fetches records from the api (async)
@@ -1125,8 +1125,8 @@ module.exports = {
   },
 
   // fetches record with matching id from the api (async)
-  fetchById: function fetchById(id) {
-    return this.$collection.fetchById(id);
+  fetchById: function fetchById(id, params) {
+    return this.$collection.fetchById(id, params);
   },
 
   // waits for all current tasks to complete

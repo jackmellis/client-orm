@@ -18,8 +18,8 @@ module.exports = {
     return this.$collection.getOne(query);
   },
   // returns record with matching id (synchronous)
-  getById(id){
-    return this.$collection.getById(id);
+  getById(id, params){
+    return this.$collection.getById(id, params);
   },
   // fetches records from the api (async)
   fetch(query){
@@ -30,8 +30,8 @@ module.exports = {
     return this.$collection.fetchOne(query);
   },
   // fetches record with matching id from the api (async)
-  fetchById(id){
-    return this.$collection.fetchById(id);
+  fetchById(id, params){
+    return this.$collection.fetchById(id, params);
   },
   // waits for all current tasks to complete
   wait(){
