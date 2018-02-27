@@ -23,7 +23,7 @@ exports.getById = function (id, params) {
   query[this.primaryKey] = id;
   const url = this.getByIdUrl(id, params);
   if (this.needsFetching(url)){
-    this.fetchById(id);
+    this.fetchById(id, params);
   }
   return this.filterResults(this.records, query).find(() => true);
 };
