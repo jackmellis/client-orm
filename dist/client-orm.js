@@ -363,8 +363,9 @@ exports.create = function (record) {
 
       if (_this.api.create && _this.http) {
         var obj = _this.getPlainObject(record);
+        var url = _this.buildUrl(_this.api.create.url, obj);
         return _this.http({
-          url: _this.api.create.url,
+          url: url,
           method: _this.api.create.method,
           data: obj
         }).then(function (response) {
@@ -399,7 +400,7 @@ exports.update = function (record) {
   var obj = Object.assign({}, changes);
   var idField = this.primaryKey;
   var id = record[idField];
-  var params = {};
+  var params = Object.assign({}, this.getPlainObject(record));
   obj[idField] = id;
   params[idField] = id;
 
@@ -457,7 +458,7 @@ exports.delete = function (record) {
   var backup = Object.assign({}, record.$proxy);
   var idField = this.primaryKey;
   var id = record[idField];
-  var params = {};
+  var params = Object.assign({}, this.getPlainObject(record));
   params[idField] = id;
   var relationships = this.relationships.filter(function (r) {
     return r.cascade;
