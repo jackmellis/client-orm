@@ -54,8 +54,9 @@ exports.create = function (record) {
 
         if (this.api.create && this.http){
           let obj = this.getPlainObject(record);
+          let url = this.buildUrl(this.api.create.url, obj);
           return this.http({
-            url : this.api.create.url,
+            url,
             method : this.api.create.method,
             data : obj
           }).then(response => {
@@ -90,7 +91,7 @@ exports.update = function (record) {
   const obj = Object.assign({}, changes);
   const idField = this.primaryKey;
   const id = record[idField];
-  const params = {};
+  const params = Object.assign({}, this.getPlainObject(record));
   obj[idField] = id;
   params[idField] = id;
 
@@ -149,7 +150,7 @@ exports.delete = function (record) {
   const backup = Object.assign({}, record.$proxy);
   const idField = this.primaryKey;
   const id = record[idField];
-  const params = {};
+  const params = Object.assign({}, this.getPlainObject(record));
   params[idField] = id;
   const relationships = this.relationships.filter(r => r.cascade);
 
