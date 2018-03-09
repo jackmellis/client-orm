@@ -12,7 +12,7 @@ const defaultApi = {
     method : 'post'
   },
   update : {
-    method : 'patch'
+    method : 'put'
   },
   delete : {
     method : 'delete'
