@@ -38,9 +38,6 @@ Base.register.factory('coerce', [], function () {
           if (typeof value === 'object') {
             return value;
           }
-          if (typeof value === 'string') {
-            return JSON.parse(value);
-          }
           break;
         default:
           return value;
@@ -77,7 +74,11 @@ Base.register.factory('coerce', [], function () {
 
         case Object:
           if (typeof value === 'string') {
-            coerced = JSON.parse(value);
+            try {
+              coerced = JSON.parse(value);
+            } catch (err) {
+              coerced = value;
+            }
           }
           if (typeof coerced === 'object') {
             return coerced;
