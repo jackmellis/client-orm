@@ -1157,6 +1157,8 @@ module.exports = __webpack_require__(2);
 "use strict";
 
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 var Base = __webpack_require__(0);
 
 Base.register.factory('coerce', [], function () {
@@ -1193,6 +1195,14 @@ Base.register.factory('coerce', [], function () {
             return value;
           }
           break;
+        case Object:
+          if ((typeof value === 'undefined' ? 'undefined' : _typeof(value)) === 'object') {
+            return value;
+          }
+          if (typeof value === 'string') {
+            return JSON.parse(value);
+          }
+          break;
         default:
           return value;
       }
@@ -1225,6 +1235,15 @@ Base.register.factory('coerce', [], function () {
             break;
           }
           return coerced;
+
+        case Object:
+          if (typeof value === 'string') {
+            coerced = JSON.parse(value);
+          }
+          if ((typeof coerced === 'undefined' ? 'undefined' : _typeof(coerced)) === 'object') {
+            return coerced;
+          }
+          break;
 
         default:
           return value;
