@@ -510,18 +510,18 @@ exports.delete = function (record) {
 function doFetch(url) {
   var _this = this;
 
-  if (!this.needsFetching(url)) {
-    var cached = this.getCache(url);
-    if (cached.promises) {
-      return this.$promise(function (resolve, reject) {
-        cached.promises.push({ resolve: resolve, reject: reject });
+  /*if (!this.needsFetching(url)){
+    let cached = this.getCache(url);
+    if (cached.promises){
+      return this.$promise((resolve, reject) => {
+        cached.promises.push({resolve, reject});
       });
-    } else {
+    }else{
       return this.$promise.resolve(this.records);
     }
-  }
+  }*/
   if (url && this.http) {
-    var _cached = this.addToCache(url);
+    var cached = this.addToCache(url);
 
     return this.http({ url: url, method: 'get' }).then(function (response) {
       var result = [].concat(response.data);
@@ -530,17 +530,17 @@ function doFetch(url) {
         return _this.add(row);
       })).then(function () {
         var records = _this.records;
-        var promises = _cached.promises;
-        _cached.timestamp = Date.now();
-        _cached.promises = null;
+        var promises = cached.promises;
+        cached.timestamp = Date.now();
+        cached.promises = null;
         promises.forEach(function (p) {
           return p.resolve(records);
         });
         return records;
       });
     }).catch(function (err) {
-      var promises = _cached.promises;
-      _cached.promises = null;
+      var promises = cached.promises;
+      cached.promises = null;
       promises.forEach(function (p) {
         return p.reject(err);
       });

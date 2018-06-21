@@ -1,5 +1,5 @@
 function doFetch(url) {
-  if (!this.needsFetching(url)){
+  /*if (!this.needsFetching(url)){
     let cached = this.getCache(url);
     if (cached.promises){
       return this.$promise((resolve, reject) => {
@@ -8,7 +8,7 @@ function doFetch(url) {
     }else{
       return this.$promise.resolve(this.records);
     }
-  }
+  }*/
   if (url && this.http){
     let cached = this.addToCache(url);
 
