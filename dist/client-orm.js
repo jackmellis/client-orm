@@ -510,6 +510,14 @@ exports.delete = function (record) {
 function doFetch(url) {
   var _this = this;
 
+  // Check if there's a current request
+  var cached = void 0;
+  cached = this.getCache(url);
+  if (cached && cached.promises) {
+    return this.$promise(function (resolve, reject) {
+      cached.promises.push({ resolve: resolve, reject: reject });
+    });
+  }
   /*if (!this.needsFetching(url)){
     let cached = this.getCache(url);
     if (cached.promises){
@@ -521,7 +529,7 @@ function doFetch(url) {
     }
   }*/
   if (url && this.http) {
-    var cached = this.addToCache(url);
+    cached = this.addToCache(url);
 
     return this.http({ url: url, method: 'get' }).then(function (response) {
       var result = [].concat(response.data);

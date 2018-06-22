@@ -1,4 +1,12 @@
 function doFetch(url) {
+  // Check if there's a current request
+  let cached;
+  cached = this.getCache(url);
+  if (cached && cached.promises) {
+    return this.$promise((resolve, reject) => {
+      cached.promises.push({resolve, reject});
+    });
+  }
   /*if (!this.needsFetching(url)){
     let cached = this.getCache(url);
     if (cached.promises){
@@ -10,7 +18,7 @@ function doFetch(url) {
     }
   }*/
   if (url && this.http){
-    let cached = this.addToCache(url);
+    cached = this.addToCache(url);
 
     return this.http({url, method : 'get'})
       .then(response => {
